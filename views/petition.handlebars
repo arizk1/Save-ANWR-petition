@@ -5,8 +5,12 @@
 <form method="POST">
   <input class = "first-name" type="text" name="first" placeholder="first name">
   <input class = "last-name" type="text" name="last" placeholder="last name">
-  <input class = "signiture" type="hidden" name="signiture">
-   <canvas id="canvas" width="700" height="300"></canvas>
+  <input class = "signature" type= "hidden" name="signature">
+  <input type="hidden" name="_csrf" value="{{csrfToken}}">
+  <canvas id="canvas" width="200" height="100"></canvas>
+    
   <button class = "submit" type="submit">Submit</button>
 </form>
+   
 
+{{> error}}
