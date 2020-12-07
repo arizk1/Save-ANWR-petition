@@ -25,6 +25,6 @@
         const sign = $(".signature");
         let dataURL = canvas[0].toDataURL();
         sign.val(dataURL);
-        console.log(sign.val());
+        // console.log(sign.val());
     });
 })();

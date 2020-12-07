@@ -1,0 +1,15 @@
+<h1> Please register to be able to sign the petation</h1>
+
+<form method="POST">
+  <input class = "first-name" type="text" name="first" placeholder="first name">
+  <input class = "last-name" type="text" name="last" placeholder="last name">
+  <input class = "email" type="text" name="email" placeholder="example@example.com">
+  <input class = "password" type="text" name="password" placeholder="p@$$W0rd">
+  <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    
+  <button class = "register" type="submit">register</button>
+</form>
+   
+{{> error}}
+
+<h3>If you are already a user, please <a href="/login">log in</a></h3>
