@@ -51,7 +51,7 @@ app.get("/register", (req, res) => {
         title: "register",
     });
 });
-//WORKING!!
+
 app.post("/register", (req, res) => {
     const { first, last, email, password } = req.body;
     hash(password).then((hashedPW) => {
@@ -81,11 +81,10 @@ app.get("/profile", (req, res) => {
         res.redirect("/register");
     }
 });
-// STILL to be tested
+
 app.post("/profile", (req, res) => {
     const { age, city, url } = req.body;
     let userid = req.session.userid;
-    // checking the url first - security matter!
     console.log(age, city, url);
     if (
         url === null ||
@@ -118,17 +117,18 @@ app.post("/login", (req, res) => {
         let hashedPW = rows[0].password;
         compare(password, hashedPW)
             .then(() => {
-                db.checkifUserSigned(req.session.userid)
-                    .then(({ rows }) => {
-                        console.log(rows);
-                        req.session.sigId = rows[0].signature;
-                        req.session.signed = true;
-                        res.redirect("/thanks");
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                        res.redirect("/petition");
-                    });
+                db.getUserIdByEmail(email).then(({ rows }) => {
+                    req.session.userid = rows[0].id;
+                    db.checkifUserSigned(req.session.userid)
+                        .then(({ rows }) => {
+                            // req.session.signed = true;
+                            res.redirect("/thanks");
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                            res.redirect("/petition");
+                        });
+                });
             })
             .catch((err) => {
                 console.log("error in logging", err);
@@ -137,28 +137,20 @@ app.post("/login", (req, res) => {
             });
     });
 });
-//WORKING!!
 // to add furst and last name and a personalized massege
 app.get("/petition", (req, res) => {
-    if (req.session.signed) {
-        res.redirect("/thanks");
-    } else {
-        res.render("petition", {
-            layout: "main",
-            title: "petition",
-        });
-    }
+    res.render("petition", {
+        layout: "main",
+        title: "petition",
+    });
 });
 
 //------------------------------
 app.post("/petition", (req, res) => {
     const { signature } = req.body;
-    let userID = req.session.userid;
-    db.addSignature(userID, signature)
-        .then(({ rows }) => {
-            res.statusCode = 200;
-            req.session.signed = true;
-            req.session.id = rows[0].id;
+    // let userID = req.session.userid;
+    db.addSignature(req.session.userid, signature)
+        .then(() => {
             res.redirect("/thanks");
         })
         .catch((err) => {
@@ -170,43 +162,36 @@ app.post("/petition", (req, res) => {
         });
 });
 //------------------------------
-//WORKING!!
 app.get("/thanks", (req, res) => {
-    if (req.session.signed && req.session.registered) {
-        db.numSigners()
-            .then(({ rows }) => {
-                const totalSigniers = rows[0].count;
+    db.numSigners()
+        .then(({ rows }) => {
+            const totalSigniers = rows[0].count;
+            db.getSig(req.session.userid).then(({ rows }) => {
                 res.render("thanks", {
                     layout: "main",
                     title: "Thanks!",
                     conut: totalSigniers,
-                    sig: req.session.sigId,
+                    sig: rows[0].signature,
                 });
-            })
-            .catch((err) => {
-                console.log(err);
             });
-    } else {
-        res.redirect("/petition");
-    }
+        })
+        .catch((err) => {
+            console.log(err);
+        });
 });
 //------------------------------
 app.get("/signers", (req, res) => {
-    if (req.session.signed && req.session.registered) {
-        db.getSignatures()
-            .then(({ rows }) => {
-                res.render("signers", {
-                    layout: "main",
-                    title: "Signers",
-                    signers: rows,
-                });
-            })
-            .catch((err) => {
-                console.log("ERORR!!!", err);
+    db.getSignatures()
+        .then(({ rows }) => {
+            res.render("signers", {
+                layout: "main",
+                title: "Signers",
+                signers: rows,
             });
-    } else {
-        res.redirect("/petition");
-    }
+        })
+        .catch((err) => {
+            console.log("ERORR!!!", err);
+        });
 });
 
 app.get("/signers/:cityUrl", (req, res) => {

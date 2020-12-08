@@ -29,12 +29,27 @@ module.exports.addSignature = (userid, signature) => {
     return db.query(q, params);
 };
 
+module.exports.getSig = (userid) => {
+    const q = `SELECT signature FROM signatures WHERE userid = ($1)`;
+    const params = [userid];
+    return db.query(q, params);
+};
+
 //New ifsigned =====>>>>> neet to be rechecked!!!!
+
+module.exports.getUserIdByEmail = (email) => {
+    const q = `SELECT id FROM users WHERE email = ($1)`;
+    const params = [email];
+    return db.query(q, params);
+};
+
 module.exports.checkifUserSigned = (userid) => {
     const q = `SELECT signature FROM signatures WHERE userid = ($1)`;
     const params = [userid];
     return db.query(q, params);
 };
+
+//===========================================================
 
 module.exports.addUser = (firstName, lastName, email, hashedPw) => {
     const q = `INSERT INTO users (first, last, email, password ) 
@@ -61,10 +76,4 @@ module.exports.checkUserPW = (email) => {
 module.exports.numSigners = () => {
     const q = `SELECT COUNT(id) FROM signatures`;
     return db.query(q);
-};
-
-module.exports.numSigniture = (userid) => {
-    const q = `SELECT signature FROM signatures WHERE userid = ($1)`;
-    const params = [userid];
-    return db.query(q, params);
 };
