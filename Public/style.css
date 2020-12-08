@@ -1,3 +1,111 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+.container {
+    display: grid;
+    min-height: 100vh;
+    grid-template-rows: 0.1fr 1fr 0.07fr;
+    gap: 0px;
+}
+
+header {
+    grid-column-start: 1;
+    grid-column-end: -1;
+    background-color: white;
+}
+
+footer {
+    grid-column-start: 1;
+    grid-column-end: -1;
+    background-color: orange;
+}
+
 #canvas {
     border: 2px solid black;
+}
+
+.banner {
+    height: 500px;
+    width: 100vw;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+        url("/Arctic-Wildlife-Refuge.png");
+    background-position: center;
+    background-size: cover;
+    margin: 0;
+    margin-bottom: 50px;
+    position: relative;
+    display: inline-block;
+}
+
+.banner-text {
+    text-align: center;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+}
+
+.banner-text h2 {
+    color: #fff;
+    font-family: sans-serif;
+    overflow: hidden;
+    /* padding-bottom: 20px; */
+    font-size: xx-large;
+    font-weight: bolder;
+    border-right: 0.15em solid orange;
+    white-space: nowrap;
+    margin: 0 auto;
+    padding-bottom: 10px;
+    /* letter-spacing: 0.15em; */
+    animation: typing 3.5s steps(30, end), blink-caret 0.5s step-end infinite;
+}
+
+.banner-text h3 {
+    padding-bottom: 30px;
+    color: white;
+    font-family: sans-serif;
+    font-size: x-large;
+    /* transition: 3s ease-in-out; */
+    animation: slide 3s;
+}
+@keyframes typing {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes blink-caret {
+    from,
+    to {
+        border-color: transparent;
+    }
+    50% {
+        border-color: orange;
+    }
+}
+
+.banner-text button {
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-family: sans-serif;
+    background-color: orange;
+    border: transparent;
+    font-size: large;
+    transition: 1s ease-in-out;
+}
+.banner-text button:hover {
+    background-color: tomato;
+    transition: 1s ease-in-out;
+}
+
+.text p {
+    padding: 10px 30px;
+    font-family: sans-serif;
+    font-size: large;
 }

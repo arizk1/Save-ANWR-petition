@@ -5,7 +5,6 @@ const db = require("./db");
 const { hash, compare } = require("./bc");
 const cookieSession = require("cookie-session");
 const csurf = require("csurf");
-// const cookieParser = require("cookie-parser");
 
 app.engine("handlebars", hp());
 app.set("view engine", "handlebars");
@@ -39,7 +38,10 @@ app.use((req, res, next) => {
 //------------------------------
 
 app.get("/", (req, res) => {
-    res.redirect("/petition");
+    res.render("firstpage", {
+        layout: "main",
+        title: "Save Arctic Wildlife Refuge",
+    });
 });
 
 //------------------------------
@@ -56,10 +58,10 @@ app.post("/register", (req, res) => {
         console.log(hashedPW);
         db.addUser(first, last, email, hashedPW)
             .then(({ rows }) => {
-                // console.log(rows);
+                console.log(rows);
                 req.session.userid = rows[0].id;
                 req.session.registered = true;
-                res.redirect("/login");
+                res.redirect("/profile");
             })
             .catch((err) => {
                 console.log("error in registration", err);
@@ -67,6 +69,39 @@ app.post("/register", (req, res) => {
                 res.render("register", { other });
             });
     });
+});
+
+app.get("/profile", (req, res) => {
+    if (req.session.registered) {
+        res.render("profile", {
+            layout: "main",
+            title: "profile",
+        });
+    } else {
+        res.redirect("/register");
+    }
+});
+// STILL to be tested
+app.post("/profile", (req, res) => {
+    const { age, city, url } = req.body;
+    let userid = req.session.userid;
+    // checking the url first - security matter!
+    console.log(age, city, url);
+    if (
+        url === null ||
+        url.startsWith("https://") ||
+        url.startsWith("http://")
+    ) {
+        db.addProfile(age, city, url, userid)
+            .then((result) => {
+                console.log(result);
+                // if signed go to thanks if not go to sign
+                res.redirect("/petition");
+            })
+            .catch((err) => {
+                console.log("erorr in registering", err);
+            });
+    }
 });
 
 app.get("/login", (req, res) => {
@@ -85,6 +120,7 @@ app.post("/login", (req, res) => {
             .then(() => {
                 db.checkifUserSigned(req.session.userid)
                     .then(({ rows }) => {
+                        console.log(rows);
                         req.session.sigId = rows[0].signature;
                         req.session.signed = true;
                         res.redirect("/thanks");
@@ -101,6 +137,7 @@ app.post("/login", (req, res) => {
             });
     });
 });
+//WORKING!!
 // to add furst and last name and a personalized massege
 app.get("/petition", (req, res) => {
     if (req.session.signed) {
@@ -114,7 +151,6 @@ app.get("/petition", (req, res) => {
 });
 
 //------------------------------
-// still to redirect to registration
 app.post("/petition", (req, res) => {
     const { signature } = req.body;
     let userID = req.session.userid;
@@ -140,15 +176,12 @@ app.get("/thanks", (req, res) => {
         db.numSigners()
             .then(({ rows }) => {
                 const totalSigniers = rows[0].count;
-                // db.checkifUserSigned(req.session.sigId).then(({ rows }) => {
-                // const userSig = rows[0].signature;
                 res.render("thanks", {
                     layout: "main",
                     title: "Thanks!",
                     conut: totalSigniers,
                     sig: req.session.sigId,
                 });
-                // });
             })
             .catch((err) => {
                 console.log(err);
@@ -158,7 +191,6 @@ app.get("/thanks", (req, res) => {
     }
 });
 //------------------------------
-//WORKING!!
 app.get("/signers", (req, res) => {
     if (req.session.signed && req.session.registered) {
         db.getSignatures()
@@ -176,6 +208,23 @@ app.get("/signers", (req, res) => {
         res.redirect("/petition");
     }
 });
+
+app.get("/signers/:cityUrl", (req, res) => {
+    const { cityUrl } = req.params;
+    db.getSignaturesByCity(cityUrl)
+        .then(({ rows }) => {
+            res.render("city", {
+                layout: "main",
+                title: cityUrl,
+                city: cityUrl,
+                signers: rows,
+            });
+        })
+        .catch((err) => {
+            console.log("ERORR in CITY", err);
+        });
+});
+
 //-------------------------------
 app.get("*", (req, res) => {
     res.redirect("/");
