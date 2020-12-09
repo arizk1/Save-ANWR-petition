@@ -82,11 +82,47 @@ module.exports.numSigners = () => {
     return db.query(q);
 };
 
-module.exports.editData = () => {
+module.exports.allData = () => {
     return db.query(`SELECT users.first, users.last, users.email, user_profiles.age, user_profiles.city, user_profiles.url
 FROM users
 JOIN user_profiles
 ON users.id = user_profiles.userid 
 JOIN signatures
 ON users.id = signatures.userid;`);
+};
+
+module.exports.editRegistrationDataWithPW = (
+    firstName,
+    lastName,
+    email,
+    hashedPw,
+    userid
+) => {
+    const q = `UPDATE users 
+    SET first = $1, last = $2, email = $3, password = $4
+    WHERE id = $5`;
+    const params = [firstName, lastName, email, hashedPw, userid];
+    return db.query(q, params);
+};
+
+module.exports.editRegistrationDataWithout = (
+    firstName,
+    lastName,
+    email,
+    userid
+) => {
+    const q = `UPDATE users 
+    SET first = $1, last = $2, email = $3
+    WHERE id = $4`;
+    const params = [firstName, lastName, email, userid];
+    return db.query(q, params);
+};
+
+module.exports.editProfileData = (age, city, url, userid) => {
+    const q = `INSERT INTO user_profiles (age, city, url, userid )
+VALUES ($1, LOWER($2), $3)
+ON CONFLICT ($4)
+DO UPDATE SET age = $1, city = LOWER($2), url = $3;`;
+    const params = [age, city, url, userid];
+    return db.query(q, params);
 };

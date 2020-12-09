@@ -163,10 +163,43 @@ app.post("/petition", (req, res) => {
 });
 
 app.get("/edit", (req, res) => {
-    res.render("edit", {
-        layout: "main",
-        title: "Edit your profile",
+    db.allData().then(({ rows }) => {
+        console.log(rows);
+        res.render("edit", {
+            layout: "main",
+            title: "Edit your profile",
+            data: rows[0],
+        });
     });
+});
+
+app.post("/edit", (req, res) => {
+    const { first, last, email, password, age, city, url } = req.body;
+    const userid = req.session.userid;
+    if (password) {
+        hash(password).then((hashedPw) => {
+            console.log(hashedPw);
+            db.editRegistrationDataWithPW(first, last, email, hashedPw, userid)
+                .then(() => {
+                    db.editProfileData(age, city, url, userid).then(() => {
+                        res.redirect("/thanks");
+                    });
+                })
+                .catch((err) => {
+                    console.log("error in updating", err);
+                });
+        });
+    } else {
+        db.editRegistrationDataWithout(first, last, email, userid)
+            .then(() => {
+                db.editProfileData(age, city, url, userid).then(() => {
+                    res.redirect("/thanks");
+                });
+            })
+            .catch((err) => {
+                console.log("error in updating", err);
+            });
+    }
 });
 
 //------------------------------
