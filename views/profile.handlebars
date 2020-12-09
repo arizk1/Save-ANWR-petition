@@ -1,7 +1,7 @@
 
 <h2>Please complete your profile</h2>
 
-<form method="POST">
+{{!-- <form method="POST">
   <div>
   <input class = "age" type="text" name="age" placeholder="your age">
   </div>
@@ -15,6 +15,30 @@
     
   <button class = "Continue" type="submit">CONTINUE</button>
 </form>
-   
+    --}}
+
+<form method="POST">
+<ul class="form1">
+    <li>
+        <label>Age</label>
+        <input type="number" name="age" class="field-long" />
+    </li>
+    <li>
+        <label>City</label>
+        <input type="text" name="city" class="field-long" />
+    </li>
+      <li>
+        <label>Profile URL</label>
+        <input type="text" name="url" class="field-long" />
+    </li>
+        <li>
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      </li>
+    <li>
+        <input type="submit" value="Submit" />
+    </li>
+</ul>
+</form>
+
 
 {{> error}}

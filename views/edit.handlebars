@@ -1,0 +1,40 @@
+
+<form method="POST">
+<ul class="form1">
+{{#data}}
+    <li>
+        <label>First name</label>
+        <input type="text" name="first" class="field-divided" value="{{first}}" /> 
+    </li>
+    <li>
+        <label>Last name</label>
+        <input type="text" name="first" class="field-divided" value="{{last}}" /> 
+    </li>
+        <label>Email</label>
+        <input type="email" name="email" class="field-long" value="{{email}}" />
+    </li>
+    <li>
+        <label>Password</label>
+        <input class = "password" type="text" name="password" placeholder="p@$$W0rd">
+    </li>
+    <li>
+        <label>City</label>
+        <input type="text" name="city" class="field-long" value="{{city}}" />
+    </li>
+    <li>
+        <label>Age</label>
+        <input type="number" name="age" class="field-long" value="{{age}}" />
+    </li>
+    <li>
+        <label>Profile URL</label>
+        <input type="text" name="url" class="field-long" value="{{url}}"/>
+    </li>
+{{/data}}
+    <li>
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    </li>
+    <li>
+        <input type="submit" value="Update Your Profile" />
+    </li>
+</ul>
+</form>

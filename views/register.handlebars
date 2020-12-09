@@ -1,6 +1,6 @@
 <h1> Please register to be able to sign the petation</h1>
 
-<form method="POST">
+{{!-- <form method="POST">
   <input class = "first-name" type="text" name="first" placeholder="first name">
   <input class = "last-name" type="text" name="last" placeholder="last name">
   <input class = "email" type="text" name="email" placeholder="example@example.com">
@@ -10,6 +10,29 @@
   <button class = "register" type="submit">register</button>
 </form>
    
+ --}}
+
+
+<form method="POST">
+<ul class="form1">
+    <li><label>Full Name <span class="required">*</span></label><input type="text" name="first" class="field-divided" placeholder="First" /> <input type="text" name="last" class="field-divided" placeholder="Last" /></li>
+    <li>
+        <label>Email <span class="required">*</span></label>
+        <input type="email" name="email" class="field-long" placeholder="example@example.com" />
+    </li>
+    <li>
+        <label>Password <span class="required">*</span></label>
+        <input class = "password" type="text" name="password" placeholder="p@$$W0rd">
+    </li>
+        <li>
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      </li>
+    <li>
+        <input type="submit" value="Submit" />
+    </li>
+</ul>
+</form>
+
 {{> error}}
 
 <h3>If you are already a user, please <a href="/login">log in</a></h3>

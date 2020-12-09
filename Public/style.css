@@ -1,8 +1,14 @@
 * {
     box-sizing: border-box;
     margin: 0;
+    font-family: sans-serif;
 }
 
+.logo {
+    color: teal;
+    margin: auto;
+    padding: 10px;
+}
 .container {
     display: grid;
     min-height: 100vh;
@@ -14,12 +20,17 @@ header {
     grid-column-start: 1;
     grid-column-end: -1;
     background-color: white;
+    box-shadow: 0 5px 15px teal;
 }
 
 footer {
+    display: grid;
     grid-column-start: 1;
     grid-column-end: -1;
-    background-color: orange;
+    background-color: teal;
+    align-items: end;
+    justify-content: center;
+    color: white;
 }
 
 #canvas {
@@ -37,9 +48,11 @@ footer {
     margin-bottom: 50px;
     position: relative;
     display: inline-block;
+    box-shadow: 0 5px 15px teal;
 }
 
 .banner-text {
+    width: 70%;
     text-align: center;
     position: relative;
     top: 50%;
@@ -48,26 +61,23 @@ footer {
     color: white;
 }
 
-.banner-text h2 {
+.banner-text h3 {
     color: #fff;
-    font-family: sans-serif;
     overflow: hidden;
-    /* padding-bottom: 20px; */
     font-size: xx-large;
     font-weight: bolder;
     border-right: 0.15em solid orange;
     white-space: nowrap;
     margin: 0 auto;
-    padding-bottom: 10px;
-    /* letter-spacing: 0.15em; */
-    animation: typing 3.5s steps(30, end), blink-caret 0.5s step-end infinite;
+    padding-bottom: 30px;
+    animation: typing 4.5s steps(30, end), blink-caret 0.5s step-end infinite;
 }
 
-.banner-text h3 {
+.banner-text h2 {
     padding-bottom: 30px;
     color: white;
     font-family: sans-serif;
-    font-size: x-large;
+    font-size: 50px;
     /* transition: 3s ease-in-out; */
     animation: slide 3s;
 }
@@ -91,7 +101,7 @@ footer {
 }
 
 .banner-text button {
-    padding: 10px 20px;
+    padding: 15px 30px;
     border-radius: 10px;
     font-family: sans-serif;
     background-color: orange;
@@ -100,12 +110,137 @@ footer {
     transition: 1s ease-in-out;
 }
 .banner-text button:hover {
-    background-color: tomato;
+    background-color: teal;
     transition: 1s ease-in-out;
 }
 
+.text {
+    display: flex;
+    flex-wrap: nowrap;
+}
 .text p {
     padding: 10px 30px;
     font-family: sans-serif;
     font-size: large;
+    text-align: justify;
+    padding-bottom: 5px;
+}
+
+.next {
+    margin: auto;
+    /* width: 50%; */
+    padding: 40px;
+    display: flex;
+    /* justify-content: center; */
+}
+
+.video {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    align-self: center;
+    /* left: 70px; */
+    /* position: relative; */
+    /* align-self: center; */
+    padding-right: 30px;
+}
+
+.next .time {
+    padding-left: 40px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: 40px;
+    align-self: center;
+    justify-content: flex-end;
+}
+
+.next .sign-now {
+    padding-right: 40px;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: 40px;
+    align-self: center;
+    justify-content: flex-end;
+}
+.sign-now a {
+    color: orange;
+    text-align: right;
+    text-decoration: orangered;
+}
+
+.form1 {
+    margin: 10px auto;
+    max-width: 400px;
+    padding: 20px 12px 10px 20px;
+    font: 13px "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+.form1 li {
+    padding: 0;
+    display: block;
+    list-style: none;
+    margin: 10px 0 0 0;
+}
+.form1 label {
+    margin: 0 0 3px 0;
+    padding: 0px;
+    display: block;
+    font-weight: bold;
+}
+.form1 input[type="text"],
+.form1 input[type="number"],
+.form1 input[type="password"],
+.form1 input[type="url"],
+.form1 input[type="email"] {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    border: 1px solid #bebebe;
+    padding: 7px;
+    margin: 0px;
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    outline: none;
+}
+.form1 input[type="text"]:focus,
+.form1 input[type="password"]:focus,
+.form1 input[type="number"]:focus,
+.form1 input[type="url"]:focus,
+.form1 input[type="email"]:focus {
+    -moz-box-shadow: 0 0 8px #88d5e9;
+    -webkit-box-shadow: 0 0 8px #88d5e9;
+    box-shadow: 0 0 8px #88d5e9;
+    border: 1px solid #88d5e9;
+}
+.form1 .field-divided {
+    width: 49%;
+}
+
+.form1 .field-long {
+    width: 100%;
+}
+.form1 .field-select {
+    width: 100%;
+}
+.form1 .field-textarea {
+    height: 100px;
+}
+.form1 input[type="submit"],
+.form1 input[type="button"] {
+    background: #4b99ad;
+    padding: 8px 15px 8px 15px;
+    border: none;
+    color: #fff;
+}
+.form1 input[type="submit"]:hover,
+.form1 input[type="button"]:hover {
+    background: #4691a4;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+}
+.form1 .required {
+    color: red;
 }

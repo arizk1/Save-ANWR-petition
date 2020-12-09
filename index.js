@@ -161,6 +161,14 @@ app.post("/petition", (req, res) => {
             });
         });
 });
+
+app.get("/edit", (req, res) => {
+    res.render("edit", {
+        layout: "main",
+        title: "Edit your profile",
+    });
+});
+
 //------------------------------
 app.get("/thanks", (req, res) => {
     db.numSigners()
@@ -215,4 +223,6 @@ app.get("*", (req, res) => {
     res.redirect("/");
 });
 
-app.listen(8080, () => console.log("Server is LISTENING!!!"));
+app.listen(process.env.PORT || 8080, () =>
+    console.log("Server is LISTENING!!!")
+);
