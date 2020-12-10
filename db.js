@@ -31,14 +31,17 @@ module.exports.addSignature = (userid, signature) => {
     const params = [userid, signature];
     return db.query(q, params);
 };
+module.exports.deleteSignature = (id) => {
+    const q = `DELETE FROM signatures WHERE userid = ($1);`;
+    const params = [id];
+    return db.query(q, params);
+};
 
 module.exports.getSig = (userid) => {
     const q = `SELECT signature FROM signatures WHERE userid = ($1)`;
     const params = [userid];
     return db.query(q, params);
 };
-
-//New ifsigned =====>>>>> neet to be rechecked!!!!
 
 module.exports.getUserIdByEmail = (email) => {
     const q = `SELECT id FROM users WHERE email = ($1)`;
@@ -82,13 +85,14 @@ module.exports.numSigners = () => {
     return db.query(q);
 };
 
-module.exports.allData = () => {
-    return db.query(`SELECT users.first, users.last, users.email, user_profiles.age, user_profiles.city, user_profiles.url
+module.exports.allData = (id) => {
+    const q = `SELECT users.first, users.last, users.email, user_profiles.age, user_profiles.city, user_profiles.url, user_profiles.userid
 FROM users
 JOIN user_profiles
-ON users.id = user_profiles.userid 
-JOIN signatures
-ON users.id = signatures.userid;`);
+ON users.id = user_profiles.userid
+WHERE users.id = $1;`;
+    const params = [id];
+    return db.query(q, params);
 };
 
 module.exports.editRegistrationDataWithPW = (
@@ -96,12 +100,12 @@ module.exports.editRegistrationDataWithPW = (
     lastName,
     email,
     hashedPw,
-    userid
+    id
 ) => {
     const q = `UPDATE users 
     SET first = $1, last = $2, email = $3, password = $4
     WHERE id = $5`;
-    const params = [firstName, lastName, email, hashedPw, userid];
+    const params = [firstName, lastName, email, hashedPw, id];
     return db.query(q, params);
 };
 
@@ -109,20 +113,20 @@ module.exports.editRegistrationDataWithout = (
     firstName,
     lastName,
     email,
-    userid
+    id
 ) => {
     const q = `UPDATE users 
     SET first = $1, last = $2, email = $3
     WHERE id = $4`;
-    const params = [firstName, lastName, email, userid];
+    const params = [firstName, lastName, email, id];
     return db.query(q, params);
 };
 
-module.exports.editProfileData = (age, city, url, userid) => {
-    const q = `INSERT INTO user_profiles (age, city, url, userid )
-VALUES ($1, LOWER($2), $3)
-ON CONFLICT ($4)
-DO UPDATE SET age = $1, city = LOWER($2), url = $3;`;
-    const params = [age, city, url, userid];
+module.exports.editProfileData = (age, city, url, id) => {
+    const q = `INSERT INTO user_profiles (age, city, url, userid)
+VALUES ($1, LOWER($2), $3, $4)
+ON CONFLICT (userid)
+DO UPDATE SET age=$1, city=LOWER($2), url=$3;`;
+    const params = [age, city, url, id];
     return db.query(q, params);
 };

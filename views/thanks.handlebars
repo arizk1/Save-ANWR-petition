@@ -1,7 +1,25 @@
-<h1>THANK YOU!</h1>
+<h1>THANK YOU {{userName}}!</h1>
 
 <img src="{{sig}}" alt="User-Signiture"/>
 
 <h3>You are one of {{conut}} brave people who signed this Petation!</h3>
 
 <a href="/signers">Click here to see the pravest humans on earth who signed</a>
+
+
+<ul class="form1">
+    <li>
+<a href="/edit"><input type="submit" value="Edit your profile" /></a>
+</li>
+</ul>
+
+<form method="POST">
+<ul class="form1">
+      <li>
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      </li>
+    <li>
+        <input type="submit" value="Delete your signiture" />
+    </li>
+</ul>
+</form>

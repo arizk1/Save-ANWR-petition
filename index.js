@@ -1,5 +1,5 @@
 const express = require("express");
-const app = express();
+const app = (exports.app = express());
 const hp = require("express-handlebars");
 const db = require("./db");
 const { hash, compare } = require("./bc");
@@ -35,12 +35,50 @@ app.use((req, res, next) => {
     next();
 });
 
-//------------------------------
+//########### MIDDLE WARE TO BE COMPLETED #############
+
+app.use((req, res, next) => {
+    if (
+        !req.session.userid &&
+        req.url != "/login" &&
+        req.url != "/register" &&
+        req.url != "/"
+    ) {
+        res.redirect("/register");
+    } else {
+        next();
+    }
+});
+
+const requireLoggedOutUser = (req, res, next) => {
+    if (req.session.userid) {
+        res.redirect("/");
+    } else {
+        next();
+    }
+};
+
+const requireUnsignedPetation = (req, res, next) => {
+    if (req.session.sigId) {
+        res.redirect("/");
+    } else {
+        next();
+    }
+};
+//###########################################
 
 app.get("/", (req, res) => {
     res.render("firstpage", {
         layout: "main",
-        title: "Save Arctic Wildlife Refuge",
+        title: "Save ANWR",
+    });
+});
+
+app.get("/user", (req, res) => {
+    res.render("firstpage", {
+        layout: "login",
+        title: "Save ANWR",
+        username: req.session.username,
     });
 });
 
@@ -61,6 +99,8 @@ app.post("/register", (req, res) => {
                 console.log(rows);
                 req.session.userid = rows[0].id;
                 req.session.registered = true;
+                req.session.logedin = true;
+                req.session.username = first;
                 res.redirect("/profile");
             })
             .catch((err) => {
@@ -72,10 +112,11 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/profile", (req, res) => {
-    if (req.session.registered) {
+    if (req.session.logedin) {
         res.render("profile", {
-            layout: "main",
+            layout: "login",
             title: "profile",
+            username: req.session.username,
         });
     } else {
         res.redirect("/register");
@@ -114,18 +155,23 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
     const { email, password } = req.body;
     db.checkUserPW(email).then(({ rows }) => {
+        // console.log(rows[0].password);
         let hashedPW = rows[0].password;
         compare(password, hashedPW)
             .then(() => {
                 db.getUserIdByEmail(email).then(({ rows }) => {
                     req.session.userid = rows[0].id;
                     db.checkifUserSigned(req.session.userid)
-                        .then(({ rows }) => {
-                            // req.session.signed = true;
-                            res.redirect("/thanks");
+                        .then(() => {
+                            db.allData(req.session.userid).then(({ rows }) => {
+                                req.session.username = rows[0].first;
+                                req.session.signed = true;
+                                req.session.logedin = true;
+                                res.redirect("/thanks");
+                            });
                         })
                         .catch((err) => {
-                            console.log(err);
+                            console.log("error in logging", err);
                             res.redirect("/petition");
                         });
                 });
@@ -140,8 +186,9 @@ app.post("/login", (req, res) => {
 // to add furst and last name and a personalized massege
 app.get("/petition", (req, res) => {
     res.render("petition", {
-        layout: "main",
+        layout: "login",
         title: "petition",
+        username: req.session.username,
     });
 });
 
@@ -163,12 +210,13 @@ app.post("/petition", (req, res) => {
 });
 
 app.get("/edit", (req, res) => {
-    db.allData().then(({ rows }) => {
+    db.allData(req.session.userid).then(({ rows }) => {
         console.log(rows);
         res.render("edit", {
-            layout: "main",
+            layout: "login",
             title: "Edit your profile",
             data: rows[0],
+            username: req.session.username,
         });
     });
 });
@@ -186,7 +234,7 @@ app.post("/edit", (req, res) => {
                     });
                 })
                 .catch((err) => {
-                    console.log("error in updating", err);
+                    console.log("error in updating 1", err);
                 });
         });
     } else {
@@ -197,7 +245,7 @@ app.post("/edit", (req, res) => {
                 });
             })
             .catch((err) => {
-                console.log("error in updating", err);
+                console.log("error in updating 2", err);
             });
     }
 });
@@ -208,11 +256,17 @@ app.get("/thanks", (req, res) => {
         .then(({ rows }) => {
             const totalSigniers = rows[0].count;
             db.getSig(req.session.userid).then(({ rows }) => {
-                res.render("thanks", {
-                    layout: "main",
-                    title: "Thanks!",
-                    conut: totalSigniers,
-                    sig: rows[0].signature,
+                let userSig = rows[0].signature;
+                db.allData(req.session.userid).then(({ rows }) => {
+                    let userName = rows[0].first;
+                    res.render("thanks", {
+                        layout: "login",
+                        title: "Thanks!",
+                        conut: totalSigniers,
+                        sig: userSig,
+                        userName: userName,
+                        username: userName,
+                    });
                 });
             });
         })
@@ -220,14 +274,22 @@ app.get("/thanks", (req, res) => {
             console.log(err);
         });
 });
+
+app.post("/thanks", (req, res) => {
+    db.deleteSignature(req.session.userid).then(() => {
+        req.session.signed = false;
+        res.redirect("/petition");
+    });
+});
 //------------------------------
 app.get("/signers", (req, res) => {
     db.getSignatures()
         .then(({ rows }) => {
             res.render("signers", {
-                layout: "main",
+                layout: "login",
                 title: "Signers",
                 signers: rows,
+                username: req.session.username,
             });
         })
         .catch((err) => {
@@ -240,10 +302,11 @@ app.get("/signers/:cityUrl", (req, res) => {
     db.getSignaturesByCity(cityUrl)
         .then(({ rows }) => {
             res.render("city", {
-                layout: "main",
+                layout: "login",
                 title: cityUrl,
                 city: cityUrl,
                 signers: rows,
+                username: req.session.username,
             });
         })
         .catch((err) => {
@@ -251,11 +314,18 @@ app.get("/signers/:cityUrl", (req, res) => {
         });
 });
 
+app.get("/logout", (req, res) => {
+    req.session.userid = null;
+    res.redirect("/");
+    // res.sendStatus(200);
+});
 //-------------------------------
 app.get("*", (req, res) => {
     res.redirect("/");
 });
 
-app.listen(process.env.PORT || 8080, () =>
-    console.log("Server is LISTENING!!!")
-);
+if (require.main == module) {
+    app.listen(process.env.PORT || 8080, () =>
+        console.log("Server is LISTENING!!!")
+    );
+}

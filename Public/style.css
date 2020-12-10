@@ -4,33 +4,75 @@
     font-family: sans-serif;
 }
 
-.logo {
-    color: teal;
-    margin: auto;
-    padding: 10px;
-}
 .container {
     display: grid;
     min-height: 100vh;
-    grid-template-rows: 0.1fr 1fr 0.07fr;
+    grid-template-rows: 0.1fr 1fr 0.05fr;
     gap: 0px;
 }
-
+/*  ###### HEADER and NAV BAR ######  */
 header {
     grid-column-start: 1;
     grid-column-end: -1;
     background-color: white;
     box-shadow: 0 5px 15px teal;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.logo {
+    justify-self: flex-start;
+
+    /* margin: auto; */
+    padding: 10px;
+}
+.logo a {
+    text-decoration: none;
+    color: #4caf50;
+}
+
+.topnav {
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    display: flex;
+    padding: 10px;
+}
+
+.topnav a {
+    color: #f2f2f2;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.topnav a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+.topnav a.active {
+    background-color: #4caf50;
+    color: white;
+}
+.topnav a.active:hover {
+    background-color: #ddd;
+    color: black;
 }
 
 footer {
     display: grid;
     grid-column-start: 1;
     grid-column-end: -1;
-    background-color: teal;
+    background-color: #4caf50;
     align-items: end;
     justify-content: center;
     color: white;
+}
+footer h6 {
+    padding-bottom: 7px;
 }
 
 #canvas {
@@ -40,7 +82,10 @@ footer {
 .banner {
     height: 500px;
     width: 100vw;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+    background-image: linear-gradient(
+            rgba(27, 119, 58, 0.2),
+            rgba(184, 245, 204, 0)
+        ),
         url("/Arctic-Wildlife-Refuge.png");
     background-position: center;
     background-size: cover;
@@ -72,7 +117,9 @@ footer {
     padding-bottom: 30px;
     animation: typing 4.5s steps(30, end), blink-caret 0.5s step-end infinite;
 }
-
+.orange {
+    color: orange;
+}
 .banner-text h2 {
     padding-bottom: 30px;
     color: white;
@@ -110,10 +157,13 @@ footer {
     transition: 1s ease-in-out;
 }
 .banner-text button:hover {
-    background-color: teal;
+    background-color: #4caf50;
     transition: 1s ease-in-out;
 }
 
+.first-page-container {
+    display: flexbox;
+}
 .text {
     display: flex;
     flex-wrap: nowrap;
@@ -209,10 +259,10 @@ footer {
 .form1 input[type="number"]:focus,
 .form1 input[type="url"]:focus,
 .form1 input[type="email"]:focus {
-    -moz-box-shadow: 0 0 8px #88d5e9;
-    -webkit-box-shadow: 0 0 8px #88d5e9;
-    box-shadow: 0 0 8px #88d5e9;
-    border: 1px solid #88d5e9;
+    -moz-box-shadow: 0 0 8px #4caf50;
+    -webkit-box-shadow: 0 0 8px #4caf50;
+    box-shadow: 0 0 8px #4caf50;
+    border: 1px solid #4caf50;
 }
 .form1 .field-divided {
     width: 49%;

@@ -9,7 +9,7 @@
         canvas.on("mousemove", (evt) => {
             let mousePoX = evt.clientX;
             let mousePoY = evt.clientY;
-            ctx.strokeStyle = "royalblue";
+            ctx.strokeStyle = "teal";
             ctx.lineWidth = 4;
             ctx.lineTo(
                 mousePoX - canvasOffSet.left,
