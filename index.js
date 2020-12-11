@@ -1,3 +1,7 @@
+//##################################
+//###### SETTINGS & MODULES #######
+//#################################
+
 const express = require("express");
 const app = (exports.app = express());
 const hp = require("express-handlebars");
@@ -5,6 +9,13 @@ const db = require("./db");
 const { hash, compare } = require("./bc");
 const cookieSession = require("cookie-session");
 const csurf = require("csurf");
+const {
+    requireLoggedOutUser,
+    requireSignedPetition,
+    requireUnsignedPetition,
+    requireLoggedInUser,
+    saftyandRouts,
+} = require("./middleware");
 
 app.engine("handlebars", hp());
 app.set("view engine", "handlebars");
@@ -26,46 +37,13 @@ app.use(csurf());
 
 app.use(express.static("./Public"));
 
-app.use((req, res, next) => {
-    console.log("--------------------");
-    console.log(`${req.method} coming on route ${req.url}`);
-    console.log("--------------------");
-    res.set("x-frame-options", "DENY");
-    res.locals.csrfToken = req.csrfToken();
-    next();
-});
+requireLoggedInUser;
 
-//########### MIDDLE WARE TO BE COMPLETED #############
+app.use(saftyandRouts);
 
-app.use((req, res, next) => {
-    if (
-        !req.session.userid &&
-        req.url != "/login" &&
-        req.url != "/register" &&
-        req.url != "/"
-    ) {
-        res.redirect("/register");
-    } else {
-        next();
-    }
-});
-
-const requireLoggedOutUser = (req, res, next) => {
-    if (req.session.userid) {
-        res.redirect("/");
-    } else {
-        next();
-    }
-};
-
-const requireUnsignedPetation = (req, res, next) => {
-    if (req.session.sigId) {
-        res.redirect("/");
-    } else {
-        next();
-    }
-};
-//###########################################
+//##################################
+//########### ROUTES ##############
+//#################################
 
 app.get("/", (req, res) => {
     res.render("firstpage", {
@@ -82,7 +60,6 @@ app.get("/user", (req, res) => {
     });
 });
 
-//------------------------------
 app.get("/register", (req, res) => {
     res.render("register", {
         layout: "main",
@@ -128,14 +105,13 @@ app.post("/profile", (req, res) => {
     let userid = req.session.userid;
     console.log(age, city, url);
     if (
-        url === null ||
+        url == null ||
         url.startsWith("https://") ||
         url.startsWith("http://")
     ) {
         db.addProfile(age, city, url, userid)
             .then((result) => {
                 console.log(result);
-                // if signed go to thanks if not go to sign
                 res.redirect("/petition");
             })
             .catch((err) => {
@@ -151,11 +127,9 @@ app.get("/login", (req, res) => {
     });
 });
 
-//WORKING!!
 app.post("/login", (req, res) => {
     const { email, password } = req.body;
     db.checkUserPW(email).then(({ rows }) => {
-        // console.log(rows[0].password);
         let hashedPW = rows[0].password;
         compare(password, hashedPW)
             .then(() => {
@@ -198,6 +172,7 @@ app.post("/petition", (req, res) => {
     // let userID = req.session.userid;
     db.addSignature(req.session.userid, signature)
         .then(() => {
+            req.session.signed = true;
             res.redirect("/thanks");
         })
         .catch((err) => {
@@ -255,20 +230,26 @@ app.get("/thanks", (req, res) => {
     db.numSigners()
         .then(({ rows }) => {
             const totalSigniers = rows[0].count;
-            db.getSig(req.session.userid).then(({ rows }) => {
-                let userSig = rows[0].signature;
-                db.allData(req.session.userid).then(({ rows }) => {
-                    let userName = rows[0].first;
-                    res.render("thanks", {
-                        layout: "login",
-                        title: "Thanks!",
-                        conut: totalSigniers,
-                        sig: userSig,
-                        userName: userName,
-                        username: userName,
+            db.getSig(req.session.userid)
+                .then(({ rows }) => {
+                    let userSig = rows[0].signature;
+                    db.allData(req.session.userid).then(({ rows }) => {
+                        let userName = rows[0].first;
+                        req.session.signed = true;
+                        res.render("thanks", {
+                            layout: "login",
+                            title: "Thanks!",
+                            conut: totalSigniers,
+                            sig: userSig,
+                            userName: userName,
+                            username: userName,
+                        });
                     });
+                })
+                .catch((err) => {
+                    console.log("Error in password", err);
+                    res.redirect("/petition");
                 });
-            });
         })
         .catch((err) => {
             console.log(err);
@@ -282,7 +263,7 @@ app.post("/thanks", (req, res) => {
     });
 });
 //------------------------------
-app.get("/signers", (req, res) => {
+app.get("/signers", requireSignedPetition, (req, res) => {
     db.getSignatures()
         .then(({ rows }) => {
             res.render("signers", {
@@ -297,7 +278,7 @@ app.get("/signers", (req, res) => {
         });
 });
 
-app.get("/signers/:cityUrl", (req, res) => {
+app.get("/signers/:cityUrl", requireSignedPetition, (req, res) => {
     const { cityUrl } = req.params;
     db.getSignaturesByCity(cityUrl)
         .then(({ rows }) => {
@@ -317,9 +298,8 @@ app.get("/signers/:cityUrl", (req, res) => {
 app.get("/logout", (req, res) => {
     req.session.userid = null;
     res.redirect("/");
-    // res.sendStatus(200);
 });
-//-------------------------------
+
 app.get("*", (req, res) => {
     res.redirect("/");
 });
