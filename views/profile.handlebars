@@ -1,5 +1,8 @@
 
-<h2>Please complete your profile</h2>
+
+<div class="address-two">
+    <h2>We would appreciate if you can complete your profile.</h2>
+</div>
 
 <form method="POST">
 <ul class="form1">
@@ -19,10 +22,11 @@
         <input type="hidden" name="_csrf" value="{{csrfToken}}">
       </li>
     <li>
-        <input type="submit" value="Submit" />
+        <input type="submit" value="Ready to sign!" />
     </li>
 </ul>
 </form>
 
-
+<div class="error">
 {{> error}}
+</div>

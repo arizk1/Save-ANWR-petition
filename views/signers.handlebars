@@ -1,5 +1,26 @@
-<h1>Here are the prave people who signed</h1>
 
-{{#signers}}
-<h4><a href="{{url}}">{{first}} {{last}}</a> {{age}} <a href= "/signers/{{city}}">{{city}}</a></h4>
-{{/signers}}
+<div class="page-container">
+
+<div class="address">
+    <h1>We can't thank you enough for your time and efforts to support <span class="orange">ANWR </span>!</h1>
+</div>
+
+<div class="message">
+    <p>
+        We will keep this list and will only be visible for those who signed the petition. 
+        We hope you can connect and network with people from your city on how to support the cause of ANWR. 
+        We can use such a rigid network to influence the decision-makers from the new President-elect Biden's 
+        Administration to stop oil drilling in ANWR.
+    </p>
+</div>
+
+<div class= "signers-containers">
+    <ul>
+    {{#signers}}
+        <li><a href="{{url}}">{{first}} {{last}}</a>, {{age}}, <span class="city"><a href= "/signers/{{city}}">{{city}}</span></a>.</li>
+    {{/signers}}
+    </ul>
+</div>
+
+
+</div>

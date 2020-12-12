@@ -1,0 +1,26 @@
+<div class="page-container">
+
+    <div class="address">
+        <h2>Are your sure you want to delete your account?</h2>
+    </div>
+
+    <div class = "message">
+        <p>Please note that your data will be delted forever and can't be restored.  
+        </p>
+    </div>
+
+
+    <div class = "del-sig">
+        <form method="POST">
+          <ul class="form1">
+                <li>
+                  <input type="hidden" name="_csrf" value="{{csrfToken}}">
+                </li>
+              <li>
+                  <input type="submit" value="Delete my profile" />
+              </li>
+          </ul>
+        </form>
+    </div>
+
+</div>

@@ -295,13 +295,33 @@ app.get("/signers/:cityUrl", requireSignedPetition, (req, res) => {
         });
 });
 
+app.get("/profile/delete", (req, res) => {
+    // req.session.userid = null;
+    res.render("delete", {
+        layout: "login",
+        username: req.session.username,
+    });
+});
+
+app.post("/profile/delete", (req, res) => {
+    db.deleteProfile(req.session.userid)
+        .then(() => {
+            req.session.userid = null;
+            req.session.signed = false;
+            res.redirect("/");
+        })
+        .catch((err) => {
+            console.log("ERORR in deleting account", err);
+        });
+});
+
 app.get("/logout", (req, res) => {
     req.session.userid = null;
     res.redirect("/");
 });
 
 app.get("*", (req, res) => {
-    res.redirect("/");
+    res.redirect("/user");
 });
 
 if (require.main == module) {

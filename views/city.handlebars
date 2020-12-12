@@ -1,7 +1,21 @@
-<h1>The amazing people of {{city}} who signed</h1>
 
-<h3>THANK YOU VERY MUCH FOR SUPPORTING OUR CAUSE</h3>
+<div class="page-container">
 
-{{#signers}}
-<h4><a href="{{url}}">{{first}} {{last}}</a> {{age}}</h4>
-{{/signers}}
+    <div class="address">
+        <h1>The amazing people of <span class="orange"><span class="city">{{city}}</span></span>!</h1>
+    </div>
+
+    <div class="message">
+        <h3>THANK YOU VERY MUCH FOR SUPPORTING OUR CAUSE</h3>
+    </div>
+
+
+    <div class="signers-containers">
+        <ul>
+        {{#signers}}
+        <li><a href="{{url}}">{{first}} {{last}}</a>, {{age}}.</li>
+        {{/signers}}
+        </ul>
+    </div>
+
+</div>

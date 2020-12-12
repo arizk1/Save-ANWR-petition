@@ -130,3 +130,11 @@ DO UPDATE SET age=$1, city=LOWER($2), url=$3;`;
     const params = [age, city, url, id];
     return db.query(q, params);
 };
+
+module.exports.deleteProfile = (id) => {
+    const q = `Delete from signatures where WHERE userid = ($1);
+Delete from user_profiles WHERE userid = ($1)
+Delete from users WHERE id = ($1);`;
+    const params = [id];
+    return db.query(q, params);
+};

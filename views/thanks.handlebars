@@ -1,25 +1,59 @@
-<h1>THANK YOU {{userName}}!</h1>
 
-<img src="{{sig}}" alt="User-Signiture"/>
+<div class="page-container">
 
-<h3>You are one of {{conut}} brave people who signed this Petation!</h3>
+  <div class = "address">
+    <h1>THANK YOU <span class="orange">{{userName}}</span>!</h1>
 
-<a href="/signers">Click here to see the pravest humans on earth who signed</a>
+    <img src="{{sig}}" alt="User-Signiture"/>
+
+  </div>
 
 
-<ul class="form1">
-    <li>
-<a href="/edit"><input type="submit" value="Edit your profile" /></a>
-</li>
-</ul>
+  <div class = "message">
+      <p>We can't thank you enough for your time and voice to support ANWR.
+          We will make sure that your voice and time count and our next steps will be shared with you by email. 
+      </p>
+  </div>
 
-<form method="POST">
-<ul class="form1">
-      <li>
-        <input type="hidden" name="_csrf" value="{{csrfToken}}">
-      </li>
-    <li>
-        <input type="submit" value="Delete your signiture" />
-    </li>
-</ul>
-</form>
+  <div>
+
+    <h3>You are one of <span class="orange">{{conut}}</span> brave and environmentally responsible people who signed to save ANWR!</h3>
+
+  </div>
+
+  <div class = "button-container">
+
+    <div class = "edit-prof">
+      <ul class="form1">
+        <li>
+            <a href="/signers"><input type="submit" value="See who signed the petition" /></a>
+        </li>
+      </ul>
+    </div>
+
+
+
+    <div class = "edit-prof">
+      <ul class="form1">
+        <li>
+            <a href="/edit"><input type="submit" value="Edit your profile" /></a>
+        </li>
+      </ul>
+    </div>
+
+    <div class = "del-sig">
+        <form method="POST">
+          <ul class="form1">
+                <li>
+                  <input type="hidden" name="_csrf" value="{{csrfToken}}">
+                </li>
+              <li>
+                  <input type="submit" value="Delete your signiture" />
+              </li>
+          </ul>
+        </form>
+    </div>
+
+  </div>
+
+</div>
