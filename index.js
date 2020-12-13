@@ -104,7 +104,7 @@ app.post("/profile", (req, res) => {
     const { age, city, url } = req.body;
     let userid = req.session.userid;
     console.log(age, city, url);
-    if (url == "" || url.startsWith("https://") || url.startsWith("http://")) {
+    if (url === "" || url.startsWith("https://") || url.startsWith("http://")) {
         db.addProfile(age, city, url, userid)
             .then(() => {
                 res.redirect("/petition");
@@ -182,10 +182,7 @@ app.post("/petition", requireLoggedInUser, (req, res) => {
         })
         .catch((err) => {
             console.log("ERROR IN ADDING DATA", err);
-            let usSig = true;
-            res.render("petition", {
-                usSig,
-            });
+            res.redirect("/petition");
         });
 });
 

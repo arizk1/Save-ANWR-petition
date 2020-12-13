@@ -69,7 +69,7 @@ module.exports.addProfile = (age, city, url, userid) => {
     const q = `INSERT INTO user_profiles (age, city, url, userid )
     VALUES ($1, LOWER($2), $3, $4) 
     RETURNING id`;
-    const params = [age || null, city || null, url, userid];
+    const params = [age || null, city || null, url || null, userid];
     return db.query(q, params);
 };
 
