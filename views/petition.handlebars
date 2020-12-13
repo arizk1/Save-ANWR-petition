@@ -1,14 +1,24 @@
 
 
-<h3>Please add your signiture here and support #ANWR</h3>
+<div class="page-container">
 
-<form method="POST">
-  <input class = "signature" type= "hidden" name="signature">
-  <input type="hidden" name="_csrf" value="{{csrfToken}}">
-  <canvas id="canvas" width="200" height="100"></canvas>
+  <div class="address">
+    <h3>Please add your signiture here to support <span class="orange">#ANWR</span></h3>
+  </div>
+
+
+  <form method="POST">
+    <input class = "signature" type= "hidden" name="signature">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <canvas id="canvas" width="300" height="90"></canvas>
+      
+    <ul class="form1">
+    <li>
+      <input type="submit" value="Submit" />
+    </li>
+  </ul>
+    {{!-- <button class = "submit" type="submit">Submit</button> --}}
+  </form>
     
-  <button class = "submit" type="submit">Submit</button>
-</form>
-   
+</div>
 
-{{> error}}

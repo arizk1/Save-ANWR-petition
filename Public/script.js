@@ -10,7 +10,7 @@
             let mousePoX = evt.clientX;
             let mousePoY = evt.clientY;
             ctx.strokeStyle = "teal";
-            ctx.lineWidth = 4;
+            ctx.lineWidth = 3;
             ctx.lineTo(
                 mousePoX - canvasOffSet.left,
                 mousePoY - canvasOffSet.top

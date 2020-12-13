@@ -76,7 +76,7 @@ footer h6 {
 }
 
 #canvas {
-    border: 2px solid black;
+    border: 2px dashed #4b99ad;
 }
 
 .banner {
@@ -111,11 +111,16 @@ footer h6 {
     overflow: hidden;
     font-size: xx-large;
     font-weight: bolder;
-    border-right: 0.15em solid orange;
+    border-right: 3px solid orange;
     white-space: nowrap;
     margin: 0 auto;
-    padding-bottom: 30px;
-    animation: typing 4.5s steps(30, end), blink-caret 0.5s step-end infinite;
+    width: 50%;
+
+    animation: typing 4.5s steps(30, end), blink 0.5s step-end infinite;
+}
+
+.banner-btn {
+    padding-top: 40px;
 }
 .orange {
     color: orange;
@@ -137,7 +142,7 @@ footer h6 {
     }
 }
 
-@keyframes blink-caret {
+@keyframes blink {
     from,
     to {
         border-color: transparent;

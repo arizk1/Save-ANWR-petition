@@ -69,8 +69,7 @@ module.exports.addProfile = (age, city, url, userid) => {
     const q = `INSERT INTO user_profiles (age, city, url, userid )
     VALUES ($1, LOWER($2), $3, $4) 
     RETURNING id`;
-    const params = [age, city, url, userid];
-    // const params = [user_id, age || null, city || null, url || null];
+    const params = [age || null, city || null, url, userid];
     return db.query(q, params);
 };
 
@@ -131,10 +130,19 @@ DO UPDATE SET age=$1, city=LOWER($2), url=$3;`;
     return db.query(q, params);
 };
 
-module.exports.deleteProfile = (id) => {
-    const q = `Delete from signatures where WHERE userid = ($1);
-Delete from user_profiles WHERE userid = ($1)
-Delete from users WHERE id = ($1);`;
-    const params = [id];
-    return db.query(q, params);
-};
+// module.exports.deleteProfile = (id) => {
+//     const q = `DELETE FROM signatures user_profiles WHERE userid = ($1);`;
+//     const params = [id];
+//     return db.query(q, params);
+// };
+
+// DELETE FROM user_profiles WHERE userid = ($1);
+// DELETE FROM users WHERE id = ($1);`
+
+// module.exports.deleteProfile = (id) => {
+//     const q = `DELETE users.first, users.last, users.email, user_profiles.age, user_profiles.city, user_profiles.url, user_profiles.userid, signatures.signature,
+// FROM users, user_profiles, signatures
+// WHERE users.id = $1;`;
+//     const params = [id];
+//     return db.query(q, params);
+// };

@@ -52,7 +52,7 @@ app.get("/", (req, res) => {
     });
 });
 
-app.get("/user", (req, res) => {
+app.get("/user", requireLoggedInUser, (req, res) => {
     res.render("firstpage", {
         layout: "login",
         title: "Save ANWR",
@@ -104,18 +104,14 @@ app.post("/profile", (req, res) => {
     const { age, city, url } = req.body;
     let userid = req.session.userid;
     console.log(age, city, url);
-    if (
-        url == null ||
-        url.startsWith("https://") ||
-        url.startsWith("http://")
-    ) {
+    if (url == "" || url.startsWith("https://") || url.startsWith("http://")) {
         db.addProfile(age, city, url, userid)
-            .then((result) => {
-                console.log(result);
+            .then(() => {
                 res.redirect("/petition");
             })
             .catch((err) => {
                 console.log("erorr in registering", err);
+                res.redirect("/profile");
             });
     }
 });
@@ -129,36 +125,45 @@ app.get("/login", (req, res) => {
 
 app.post("/login", (req, res) => {
     const { email, password } = req.body;
-    db.checkUserPW(email).then(({ rows }) => {
-        let hashedPW = rows[0].password;
-        compare(password, hashedPW)
-            .then(() => {
-                db.getUserIdByEmail(email).then(({ rows }) => {
-                    req.session.userid = rows[0].id;
-                    db.checkifUserSigned(req.session.userid)
-                        .then(() => {
-                            db.allData(req.session.userid).then(({ rows }) => {
-                                req.session.username = rows[0].first;
-                                req.session.signed = true;
-                                req.session.logedin = true;
-                                res.redirect("/thanks");
+    db.checkUserPW(email)
+        .then(({ rows }) => {
+            let hashedPW = rows[0].password;
+            console.log(hashedPW);
+            console.log(password);
+            compare(password, hashedPW).then((result) => {
+                console.log(result);
+                if (result) {
+                    db.getUserIdByEmail(email).then(({ rows }) => {
+                        req.session.userid = rows[0].id;
+                        db.checkifUserSigned(req.session.userid)
+                            .then(() => {
+                                db.allData(req.session.userid).then(
+                                    ({ rows }) => {
+                                        req.session.username = rows[0].first;
+                                        req.session.signed = true;
+                                        req.session.logedin = true;
+                                        res.redirect("/thanks");
+                                    }
+                                );
+                            })
+                            .catch(() => {
+                                res.redirect("/petition");
                             });
-                        })
-                        .catch((err) => {
-                            console.log("error in logging", err);
-                            res.redirect("/petition");
-                        });
-                });
-            })
-            .catch((err) => {
-                console.log("error in logging", err);
-                let other = true;
-                res.render("login", { other });
+                    });
+                } else {
+                    let other = true;
+                    res.render("login", { other });
+                }
             });
-    });
+        })
+        .catch((err) => {
+            console.log("error in logging", err);
+            let other = true;
+            res.render("login", { other });
+        });
 });
-// to add furst and last name and a personalized massege
-app.get("/petition", (req, res) => {
+
+app.get("/petition", requireLoggedInUser, (req, res) => {
     res.render("petition", {
         layout: "login",
         title: "petition",
@@ -167,7 +172,7 @@ app.get("/petition", (req, res) => {
 });
 
 //------------------------------
-app.post("/petition", (req, res) => {
+app.post("/petition", requireLoggedInUser, (req, res) => {
     const { signature } = req.body;
     // let userID = req.session.userid;
     db.addSignature(req.session.userid, signature)
@@ -184,9 +189,9 @@ app.post("/petition", (req, res) => {
         });
 });
 
-app.get("/edit", (req, res) => {
+app.get("/edit", requireLoggedInUser, (req, res) => {
     db.allData(req.session.userid).then(({ rows }) => {
-        console.log(rows);
+        // console.log(rows);
         res.render("edit", {
             layout: "login",
             title: "Edit your profile",
@@ -196,7 +201,7 @@ app.get("/edit", (req, res) => {
     });
 });
 
-app.post("/edit", (req, res) => {
+app.post("/edit", requireLoggedInUser, (req, res) => {
     const { first, last, email, password, age, city, url } = req.body;
     const userid = req.session.userid;
     if (password) {
@@ -226,7 +231,7 @@ app.post("/edit", (req, res) => {
 });
 
 //------------------------------
-app.get("/thanks", (req, res) => {
+app.get("/thanks", requireLoggedInUser, (req, res) => {
     db.numSigners()
         .then(({ rows }) => {
             const totalSigniers = rows[0].count;
@@ -295,7 +300,7 @@ app.get("/signers/:cityUrl", requireSignedPetition, (req, res) => {
         });
 });
 
-app.get("/profile/delete", (req, res) => {
+app.get("/profile/delete", requireLoggedInUser, (req, res) => {
     // req.session.userid = null;
     res.render("delete", {
         layout: "login",
@@ -303,7 +308,7 @@ app.get("/profile/delete", (req, res) => {
     });
 });
 
-app.post("/profile/delete", (req, res) => {
+app.post("/profile/delete", requireLoggedInUser, (req, res) => {
     db.deleteProfile(req.session.userid)
         .then(() => {
             req.session.userid = null;
