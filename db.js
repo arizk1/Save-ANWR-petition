@@ -80,7 +80,7 @@ module.exports.checkUserPW = (email) => {
 };
 
 module.exports.numSigners = () => {
-    const q = `SELECT COUNT(id) FROM signatures`;
+    const q = `SELECT COUNT(*) FROM signatures`;
     return db.query(q);
 };
 
