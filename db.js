@@ -126,7 +126,7 @@ module.exports.editProfileData = (age, city, url, id) => {
 VALUES ($1, LOWER($2), $3, $4)
 ON CONFLICT (userid)
 DO UPDATE SET age=$1, city=LOWER($2), url=$3;`;
-    const params = [age, city, url, id];
+    const params = [age || null, city || null, url || null, id];
     return db.query(q, params);
 };
 

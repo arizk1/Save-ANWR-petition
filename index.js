@@ -88,16 +88,12 @@ app.post("/register", (req, res) => {
     });
 });
 
-app.get("/profile", (req, res) => {
-    if (req.session.logedin) {
-        res.render("profile", {
-            layout: "login",
-            title: "profile",
-            username: req.session.username,
-        });
-    } else {
-        res.redirect("/register");
-    }
+app.get("/profile", requireLoggedInUser, (req, res) => {
+    res.render("profile", {
+        layout: "login",
+        title: "profile",
+        username: req.session.username,
+    });
 });
 
 app.post("/profile", (req, res) => {
@@ -110,9 +106,17 @@ app.post("/profile", (req, res) => {
                 res.redirect("/petition");
             })
             .catch((err) => {
-                console.log("erorr in registering", err);
+                console.log("erorr in adding profile data", err);
                 res.redirect("/profile");
             });
+    } else {
+        let other = true;
+        res.render("profile", {
+            layout: "login",
+            title: "profile",
+            username: req.session.username,
+            other,
+        });
     }
 });
 
