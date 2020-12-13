@@ -261,10 +261,12 @@ footer h6 {
     border: 1px solid #bebebe;
     padding: 7px;
     margin: 0px;
+    /* animation for the shadow! */
     -webkit-transition: all 0.3s ease-in-out;
     -moz-transition: all 0.3s ease-in-out;
     -ms-transition: all 0.3s ease-in-out;
     -o-transition: all 0.3s ease-in-out;
+    /* animation for the shadow! */
     outline: none;
 }
 .form1 input[type="text"]:focus,

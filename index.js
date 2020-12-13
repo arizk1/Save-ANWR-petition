@@ -110,13 +110,15 @@ app.post("/profile", (req, res) => {
                 res.redirect("/profile");
             });
     } else {
-        let other = true;
-        res.render("profile", {
-            layout: "login",
-            title: "profile",
-            username: req.session.username,
-            other,
-        });
+        let url = "";
+        db.addProfile(age, city, url, userid)
+            .then(() => {
+                res.redirect("/petition");
+            })
+            .catch((err) => {
+                console.log("erorr in adding profile data", err);
+                res.redirect("/profile");
+            });
     }
 });
 
@@ -210,7 +212,17 @@ app.post("/edit", requireLoggedInUser, (req, res) => {
             console.log(hashedPw);
             db.editRegistrationDataWithPW(first, last, email, hashedPw, userid)
                 .then(() => {
-                    db.editProfileData(age, city, url, userid).then(() => {
+                    const newUrl = (() => {
+                        if (
+                            url.startsWith("http://") ||
+                            url.startsWith("https://")
+                        ) {
+                            return url;
+                        } else {
+                            return "";
+                        }
+                    })();
+                    db.editProfileData(age, city, newUrl, userid).then(() => {
                         res.redirect("/thanks");
                     });
                 })
@@ -221,9 +233,30 @@ app.post("/edit", requireLoggedInUser, (req, res) => {
     } else {
         db.editRegistrationDataWithout(first, last, email, userid)
             .then(() => {
-                db.editProfileData(age, city, url, userid).then(() => {
-                    res.redirect("/thanks");
-                });
+                db.editProfileData(age, city, url, userid)
+                    .then(() => {
+                        res.redirect("/thanks");
+                    })
+                    .then(() => {
+                        const newUrl = (() => {
+                            if (
+                                url.startsWith("http://") ||
+                                url.startsWith("https://")
+                            ) {
+                                return url;
+                            } else {
+                                return "";
+                            }
+                        })();
+                        db.editProfileData(age, city, newUrl, userid).then(
+                            () => {
+                                res.redirect("/thanks");
+                            }
+                        );
+                    })
+                    .catch((err) => {
+                        console.log("error in updating 1", err);
+                    });
             })
             .catch((err) => {
                 console.log("error in updating 2", err);
@@ -301,25 +334,25 @@ app.get("/signers/:cityUrl", requireSignedPetition, (req, res) => {
         });
 });
 
-app.get("/profile/delete", requireLoggedInUser, (req, res) => {
-    // req.session.userid = null;
-    res.render("delete", {
-        layout: "login",
-        username: req.session.username,
-    });
-});
+// app.get("/profile/delete", requireLoggedInUser, (req, res) => {
+//     // req.session.userid = null;
+//     res.render("delete", {
+//         layout: "login",
+//         username: req.session.username,
+//     });
+// });
 
-app.post("/profile/delete", requireLoggedInUser, (req, res) => {
-    db.deleteProfile(req.session.userid)
-        .then(() => {
-            req.session.userid = null;
-            req.session.signed = false;
-            res.redirect("/");
-        })
-        .catch((err) => {
-            console.log("ERORR in deleting account", err);
-        });
-});
+// app.post("/profile/delete", requireLoggedInUser, (req, res) => {
+//     db.deleteProfile(req.session.userid)
+//         .then(() => {
+//             req.session.userid = null;
+//             req.session.signed = false;
+//             res.redirect("/");
+//         })
+//         .catch((err) => {
+//             console.log("ERORR in deleting account", err);
+//         });
+// });
 
 app.get("/logout", (req, res) => {
     req.session.userid = null;
